@@ -22,12 +22,15 @@ systemctl disable --now firewalld
 # Disable Swap
 
 swapoff -a
+
 vim /etc/fstab  #comment Swap line
 
 # Install Docker CE
 
 yum install -y yum-utils device-mapper-persistent-data lvm2
+
 yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+
 yum install -y docker-ce
 
 # Install Kubernetes
@@ -39,14 +42,22 @@ vi /etc/yum.repos.d/kubernetes.repo
 or
 
 cat <<EOF > /etc/yum.repos.d/kubernetes.repo
+        
 [kubernetes]
+
 name=Kubernetes
+
 baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+
 enabled=1
+
 gpgcheck=1
+
 repo_gpgcheck=1
+
 gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg
         https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+        
 EOF
 
 yum install -y kubelet kubeadm kubectl
@@ -58,6 +69,7 @@ sudo reboot
 # Enable and start docker and kubelet (kubelet may fail to start, ignore for now)
 
 systemctl start docker && systemctl enable docker
+
 systemctl start kubelet && systemctl enable kubelet
 
 # Change the cgroup-driver (We need to make sure the docker-ce and kubernetes are using same 'cgroup'.)
@@ -69,11 +81,12 @@ sed -i 's/cgroup-driver=systemd/cgroup-driver=cgroupfs/g' /usr/lib/systemd/syste
 # Reload the systemd system and restart the kubelet service.
 
 systemctl daemon-reload
+
 systemctl restart kubelet
 
 # Kubernetes Cluster Initialization
 
-kubeadm init --apiserver-advertise-address=<ip of master> --pod-network-cidr=10.244.0.0/16  # {master ip:  10.128.0.10  pod network :                                                                                                   10.128.0.0/16 }
+kubeadm init --apiserver-advertise-address=10.128.0.10 --pod-network-cidr=10.128.0.0/16  # {master ip:  10.128.0.10  pod network :                                                                                                   10.128.0.0/16 }
 
 Note:
 
@@ -105,7 +118,9 @@ kubeadm join 10.128.0.10:6443 --token oagfbq.abnjmjojco1v42q1 \
 # Switce to normal Sudo user kube and execute below commands
 
 mkdir -p $HOME/.kube
+
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 # To deploy flannel network
