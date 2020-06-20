@@ -39,10 +39,7 @@ yum install -y docker-ce
 
 vi /etc/yum.repos.d/kubernetes.repo
 
-or
-
-cat <<EOF > /etc/yum.repos.d/kubernetes.repo
-        
+    
 [kubernetes]
 
 name=Kubernetes
@@ -58,7 +55,7 @@ repo_gpgcheck=1
 gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg
         https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
         
-EOF
+--------------------------------------------------
 
 yum install -y kubelet kubeadm kubectl
  
@@ -129,4 +126,5 @@ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 
+kubectl apply -f https://docs.projectcalico.org/v3.14/manifests/calico.yaml
 
