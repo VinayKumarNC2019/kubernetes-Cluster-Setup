@@ -124,7 +124,24 @@ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 # To deploy flannel network
 
-kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
-
 kubectl apply -f https://docs.projectcalico.org/v3.14/manifests/calico.yaml
+
+------------------------------------------------------------------------------------------
+
+In case if you would like to destroy and rebuild the cluster: 
+
+On Master and worker Node:
+
+sudo kubeadm reset 
+
+rm -f  /etc/cni/net.d
+
+sudo rm -rf /var/lib/cni/
+
+systemctl daemon-reload
+
+systemctl restart kubelet
+
+sudo iptables -F && sudo iptables -t nat -F && sudo iptables -t mangle -F && sudo iptables -X
+
 
